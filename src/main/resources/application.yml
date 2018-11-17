@@ -1,0 +1,16 @@
+server:
+  port: 7001
+
+generator:
+  enabled: true
+  start-delay-milliseconds: 2000
+  interval-milliseconds: 5
+  num-threads: 4
+
+kafka:
+  hosts:
+    - "kafka:9092"
+    - "kafka_1:9093"
+    - "kafka_2:9094"
+  stock-quote:
+    topic: stock-quote-tick
