@@ -1,7 +1,7 @@
 package com.codespair.ticker.service;
 
 import com.codespair.ticker.config.GeneratorProps;
-import com.codespair.ticker.repository.csv.CSVLoader;
+import com.codespair.ticker.repository.csv.CsvToMemoryMapLoader;
 import com.codespair.ticker.repository.kafka.StockQuoteGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class LifeCycleManagement implements ApplicationListener<ApplicationReadyEvent> {
 
-  private final CSVLoader csvLoader;
+  private final CsvToMemoryMapLoader csvToMemoryMapLoader;
   private final StockQuoteGenerator stockQuoteGenerator;
   private final GeneratorProps generatorProps;
 
-  public LifeCycleManagement(CSVLoader csvLoader, StockQuoteGenerator stockQuoteGenerator, GeneratorProps generatorProps) {
-    this.csvLoader = csvLoader;
+  public LifeCycleManagement(CsvToMemoryMapLoader csvToMemoryMapLoader, StockQuoteGenerator stockQuoteGenerator, GeneratorProps generatorProps) {
+    this.csvToMemoryMapLoader = csvToMemoryMapLoader;
     this.stockQuoteGenerator = stockQuoteGenerator;
     this.generatorProps = generatorProps;
   }
@@ -29,7 +29,7 @@ public class LifeCycleManagement implements ApplicationListener<ApplicationReady
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
     log.info("starting the application engine, loading CSVs...");
-    csvLoader.loadCSVs();
+    csvToMemoryMapLoader.loadCSVs();
     startQuoteProducer(generatorProps.getNumThreads());
     log.info("Lifecycle initialization done!");
   }

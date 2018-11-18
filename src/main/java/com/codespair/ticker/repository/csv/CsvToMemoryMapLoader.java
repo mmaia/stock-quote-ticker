@@ -24,11 +24,11 @@ import java.util.Map;
  */
 @Slf4j
 @Component("csvParser")
-public class CSVLoader {
+public class CsvToMemoryMapLoader implements CsvParser {
 
   private final StockExchangeMaps stockExchangeMaps;
 
-  public CSVLoader(StockExchangeMaps stockExchangeMaps) {
+  public CsvToMemoryMapLoader(StockExchangeMaps stockExchangeMaps) {
     this.stockExchangeMaps = stockExchangeMaps;
   }
 
@@ -39,6 +39,7 @@ public class CSVLoader {
    * @param filePath the filepath relative to the classpath where the csv is to be found, i.e - /static/AMEX.csv, the
    *                 expected csv column structure is a csv with attributes separated by comma ','  and with the structure:
    *                 "symbol", "name", "lastSale", "marketCap", "ipoYear", "sector", "industry", "summaryQuote"
+   *
    * @returns a map where each key is a stock exchange symbol and each element is a StockDetail object filled with
    * data loaded from the CSVs.
    */
@@ -60,6 +61,7 @@ public class CSVLoader {
     return result;
   }
 
+  @Override
   public void loadCSVs() {
     Arrays.stream(Exchange.values()).forEach(exchange -> {
       stockExchangeMaps.addExchangeMap(exchange.name(), stockExchagesMap(exchange.name()));
@@ -70,14 +72,6 @@ public class CSVLoader {
 
   private Map<String, StockDetail> stockExchagesMap(String exchange) {
     return loadExchangeCSV("/exchanges/" + exchange + ".csv");
-  }
-
-  private ColumnPositionMappingStrategy<StockDetail> getStockDetailMappingStrategy() {
-    ColumnPositionMappingStrategy<StockDetail> loadStrategy = new ColumnPositionMappingStrategy<>();
-    loadStrategy.setType(StockDetail.class);
-    String[] columns = new String[]{"symbol", "name", "lastSale", "marketCap", "ipoYear", "sector", "industry", "summaryQuote"}; // the fields to bind do in your JavaBean
-    loadStrategy.setColumnMapping(columns);
-    return loadStrategy;
   }
 
   private Map<String, StockDetail> stockDetailsBySymbol(List<StockDetail> stockDetailList) {
