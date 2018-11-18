@@ -5,7 +5,7 @@
 
 	<groupId>com.codespair.com.quoteticker</groupId>
 	<artifactId>stock-quote-ticker</artifactId>
-	<version>0.9-SNAPSHOT</version>
+	<version>1.0.0-RELEASE</version>
 	<packaging>jar</packaging>
 
 	<name>stock-quote-com.codespair.ticker</name>
