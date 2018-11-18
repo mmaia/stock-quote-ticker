@@ -1,6 +1,6 @@
 # Stock Quote Generator
 
-This project generates a contant flow of messages that are produced to a kafka topic and simulate 
+This project generates a conStant flow of messages that are produced to a kafka topic and simulate 
 instrument ticks from the market. 
 I've build this project to help me with my studies of kafka in the domain of Bank Securities. 
 
@@ -15,7 +15,10 @@ randomically by this app.
 generate values for it's stocks. 
 
 3. The meta data of each instrument with it's randomically generated values are then joined in memory and
-the result object is then serialized to json and send to a kafka topic. 
+the result object is serialized to json and sent to a kafka topic. 
+
+This application, as noted after a few tests is capable of generating thousands of ticks per second without 
+too much overhead which makes it great for kafka playgrounds! 
 
 
 ## Configurations
@@ -49,13 +52,11 @@ like from an IDE or using command line:
 Once the application is started it immediately starts to produce messages to kafka topic based on the configurations.
 
 The docker compose file has by default portainer application to help visualize the docker infra-structure and 
-also a kafka-manager console to help to visualize the Kafka broker cluster that is started with 3 brokers. 
+also a kafka-manager console to help to visualize the Kafka broker cluster that is started and by default contains 3 brokers. 
 
 # License
 
 MIT License
-
-Copyright (c) 2018 - Maia, M. P. A.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -74,3 +75,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+Copyright (c) 2018 - Maia, M. P. A.
