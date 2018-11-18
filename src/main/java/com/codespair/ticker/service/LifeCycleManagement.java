@@ -21,7 +21,9 @@ public class LifeCycleManagement implements ApplicationListener<ApplicationReady
   private final StockQuoteGenerator stockQuoteGenerator;
   private final GeneratorProps generatorProps;
 
-  public LifeCycleManagement(CsvToMemoryMapLoader csvToMemoryMapLoader, StockQuoteGenerator stockQuoteGenerator, GeneratorProps generatorProps) {
+  public LifeCycleManagement(CsvToMemoryMapLoader csvToMemoryMapLoader,
+                             StockQuoteGenerator stockQuoteGenerator,
+                             GeneratorProps generatorProps) {
     this.csvParser = csvToMemoryMapLoader;
     this.stockQuoteGenerator = stockQuoteGenerator;
     this.generatorProps = generatorProps;
