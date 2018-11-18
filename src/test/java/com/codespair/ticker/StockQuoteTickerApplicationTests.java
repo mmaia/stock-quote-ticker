@@ -1,4 +1,4 @@
-package io.stockgeeks.ticker;
+package com.codespair.ticker;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
