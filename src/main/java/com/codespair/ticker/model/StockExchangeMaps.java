@@ -20,7 +20,6 @@ public class StockExchangeMaps {
   }
 
   public void addExchangeMap(String key, Map<String, StockDetail> exchange) {
-    if(exchanges == null) return; //ignore if null
     exchanges.put(key, exchange);
   }
 
@@ -47,6 +46,7 @@ public class StockExchangeMaps {
     return StockQuote.builder()
       .exchange(Exchange.valueOf(exchange))
       .symbol(symbols.get(whichInstrument))
+      .stockDetail(stockDetailMap.get(symbols.get(whichInstrument)))
       .build();
   }
 

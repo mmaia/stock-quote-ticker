@@ -49,7 +49,9 @@ public class CSVLoader {
       File resource = new ClassPathResource(filePath).getFile();
       FileReader fileReader = new FileReader(resource);
       CSVReader reader = new CSVReader(fileReader);
-      result = stockDetailsBySymbol(csv.parse(getStockDetailMappingStrategy(), reader));
+      csv.setCsvReader(reader);
+      csv.setMappingStrategy(getStockDetailMappingStrategy());
+      result = stockDetailsBySymbol(csv.parse());
       fileReader.close();
     } catch (Exception e) {
       log.error("Failed to load csv file with exchange information because: {}", e.getMessage());

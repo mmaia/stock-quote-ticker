@@ -20,31 +20,21 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @Component
-@Scope("prototype")
-public class StringJsonNodeClientProducer {
+public class StringJsonNodeClientProducer implements AutoCloseable {
 
-    private KafkaProps config;
+    private final KafkaProps config;
     private Producer<String, JsonNode> kafkaProducer;
-    private String clientId;
 
     public StringJsonNodeClientProducer(KafkaProps kafkaProps) {
         this.config = kafkaProps;
-    }
-
-    public void initializeClient(String clientId) {
-        this.clientId = clientId;
-        createProducer();
-    }
-
-    private void createProducer() {
         kafkaProducer = new KafkaProducer<>(kafkaClientProperties());
     }
 
-    public Future<RecordMetadata> send(String topic, String key, Object instance) {
+    Future<RecordMetadata> send(String topic, String key, Object instance) {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.convertValue(instance, JsonNode.class);
         return kafkaProducer.send(new ProducerRecord<>(topic, key,
-                jsonNode));
+          jsonNode));
     }
 
     public void close() {
@@ -54,7 +44,6 @@ public class StringJsonNodeClientProducer {
     private Properties kafkaClientProperties() {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getHosts());
-        properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId + RandomStringUtils.random(5, true, true));
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return properties;

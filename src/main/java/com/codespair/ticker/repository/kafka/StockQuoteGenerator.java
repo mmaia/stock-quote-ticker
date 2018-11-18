@@ -38,11 +38,10 @@ public class StockQuoteGenerator {
     @Async("taskExecutor")
     public void startGenerator() {
         if (generatorProps.isEnabled()) {
-            quotesProducer.initializeClient(stockQuoteTopic() + "Id");
-            log.info("Starting random quote generation in {} milliseconds, with interval: {} milliseconds between each quote",
-                    generatorProps.getStartDelayMilliseconds(), generatorProps.getIntervalMilliseconds());
             try {
                 Thread.sleep(generatorProps.getStartDelayMilliseconds());
+                log.info("Starting random quote generation in {} milliseconds, with interval: {} milliseconds between each quote",
+                  generatorProps.getStartDelayMilliseconds(), generatorProps.getIntervalMilliseconds());
                 while (true) {
                     StockQuote stockQuote = stockExchangeMaps.randomStockSymbol();
                     stockQuote = enrich(stockQuote);
