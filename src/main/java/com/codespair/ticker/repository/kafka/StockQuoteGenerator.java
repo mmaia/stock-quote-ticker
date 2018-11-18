@@ -14,7 +14,10 @@ import java.util.Random;
 
 /**
  * This class on startup try to start generating random
- * stockquotes unless disabled(default) in the configuration
+ * stock quotes and produces them to kafka, unless disabled in the configuration.
+ *
+ * This class uses an in memory meta data map of the quotes loaded from the csv files and joins it with
+ * randomly generated quotes.
  */
 @Slf4j
 @Service
@@ -43,9 +46,11 @@ public class StockQuoteGenerator {
         log.info("Starting random quote generation in {} milliseconds, with interval: {} milliseconds between each quote",
           generatorProps.getStartDelayMilliseconds(), generatorProps.getIntervalMilliseconds());
         while (true) {
+          // in the next 2 calls a random quote is picked from the map and randomically generated values are added to the quote.
           StockQuote stockQuote = stockExchangeMaps.randomStockSymbol();
           stockQuote = enrich(stockQuote);
-          quotesProducer.send(stockQuoteTopic(), stockQuote.getSymbol(), stockQuote);
+
+          quotesProducer.send(stockQuoteTopic(), stockQuote.getSymbol(), stockQuote); // send to kafka topic
           Thread.sleep(generatorProps.getIntervalMilliseconds());
         }
       } catch (InterruptedException e) {
