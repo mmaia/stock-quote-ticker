@@ -15,6 +15,7 @@ import org.apache.kafka.connect.json.JsonSerializer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
@@ -22,31 +23,32 @@ import java.util.concurrent.Future;
 @Component
 public class StringJsonNodeClientProducer implements AutoCloseable {
 
-    private final KafkaProps config;
-    private Producer<String, JsonNode> kafkaProducer;
+  private final KafkaProps config;
+  private Producer<String, JsonNode> kafkaProducer;
 
-    public StringJsonNodeClientProducer(KafkaProps kafkaProps) {
-        this.config = kafkaProps;
-        kafkaProducer = new KafkaProducer<>(kafkaClientProperties());
-    }
+  public StringJsonNodeClientProducer(KafkaProps kafkaProps) {
+    this.config = kafkaProps;
+    kafkaProducer = new KafkaProducer<>(kafkaClientProperties());
+  }
 
-    Future<RecordMetadata> send(String topic, String key, Object instance) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.convertValue(instance, JsonNode.class);
-        return kafkaProducer.send(new ProducerRecord<>(topic, key,
-          jsonNode));
-    }
+  Future<RecordMetadata> send(String topic, String key, Object instance) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    JsonNode jsonNode = objectMapper.convertValue(instance, JsonNode.class);
+    return kafkaProducer.send(new ProducerRecord<>(topic, key,
+      jsonNode));
+  }
 
-    public void close() {
-        kafkaProducer.close();
-    }
+  @PreDestroy
+  public void close() {
+    kafkaProducer.close();
+  }
 
-    private Properties kafkaClientProperties() {
-        Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getHosts());
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return properties;
-    }
+  private Properties kafkaClientProperties() {
+    Properties properties = new Properties();
+    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getHosts());
+    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+    return properties;
+  }
 }
 

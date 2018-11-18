@@ -20,64 +20,66 @@ import java.util.Random;
 @Service
 public class StockQuoteGenerator {
 
-    private GeneratorProps generatorProps;
-    private KafkaProps kafkaProps;
-    private StockExchangeMaps stockExchangeMaps;
-    private StringJsonNodeClientProducer quotesProducer;
+  private GeneratorProps generatorProps;
+  private KafkaProps kafkaProps;
+  private StockExchangeMaps stockExchangeMaps;
+  private StringJsonNodeClientProducer quotesProducer;
 
-    public StockQuoteGenerator(GeneratorProps generatorProps,
-                               KafkaProps kafkaProps,
-                               StockExchangeMaps stockExchangeMaps,
-                               StringJsonNodeClientProducer quotesProducer) {
-        this.generatorProps = generatorProps;
-        this.kafkaProps = kafkaProps;
-        this.stockExchangeMaps = stockExchangeMaps;
-        this.quotesProducer = quotesProducer;
-    }
+  public StockQuoteGenerator(GeneratorProps generatorProps,
+                             KafkaProps kafkaProps,
+                             StockExchangeMaps stockExchangeMaps,
+                             StringJsonNodeClientProducer quotesProducer) {
+    this.generatorProps = generatorProps;
+    this.kafkaProps = kafkaProps;
+    this.stockExchangeMaps = stockExchangeMaps;
+    this.quotesProducer = quotesProducer;
+  }
 
-    @Async("taskExecutor")
-    public void startGenerator() {
-        if (generatorProps.isEnabled()) {
-            try {
-                Thread.sleep(generatorProps.getStartDelayMilliseconds());
-                log.info("Starting random quote generation in {} milliseconds, with interval: {} milliseconds between each quote",
-                  generatorProps.getStartDelayMilliseconds(), generatorProps.getIntervalMilliseconds());
-                while (true) {
-                    StockQuote stockQuote = stockExchangeMaps.randomStockSymbol();
-                    stockQuote = enrich(stockQuote);
-                    quotesProducer.send(stockQuoteTopic(), stockQuote.getSymbol(), stockQuote);
-                    Thread.sleep(generatorProps.getIntervalMilliseconds());
-                }
-            } catch (InterruptedException e) {
-                log.error("StockQuoteGenerator stopped producing quotes due to error: {}", e.getMessage());
-            }
+  @Async("taskExecutor")
+  public void startGenerator() {
+    if (generatorProps.isEnabled()) {
+      try {
+        Thread.sleep(generatorProps.getStartDelayMilliseconds());
+        log.info("Starting random quote generation in {} milliseconds, with interval: {} milliseconds between each quote",
+          generatorProps.getStartDelayMilliseconds(), generatorProps.getIntervalMilliseconds());
+        while (true) {
+          StockQuote stockQuote = stockExchangeMaps.randomStockSymbol();
+          stockQuote = enrich(stockQuote);
+          quotesProducer.send(stockQuoteTopic(), stockQuote.getSymbol(), stockQuote);
+          Thread.sleep(generatorProps.getIntervalMilliseconds());
         }
+      } catch (InterruptedException e) {
+        log.error("StockQuoteGenerator stopped producing quotes due to error: {}", e.getMessage());
+      }
     }
+  }
 
-    private String stockQuoteTopic() {
-        return this.kafkaProps.getStockQuote().getTopic();
-    }
+  private String stockQuoteTopic() {
+    return this.kafkaProps.getStockQuote().getTopic();
+  }
 
-    // TODO - to better illustrate kafka usage move this
-    //     routine to 2 topics one with stock details and another one with
-    //     ticks and join them to generate final
-    //     tick with stock details
-    /**
-     * Randomize values of high, low and lastTrade of quotes,
-     * @param stockQuote the quote to have some values randomized
-     * @return StockQuote with high, low and lastTrade randomized.
-     */
-    public StockQuote enrich(StockQuote stockQuote) {
-        Random random = new Random();
-        int upTo = 1000;
-        stockQuote.setHigh(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
-        stockQuote.setLow(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
-        stockQuote.setLastTrade(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
-        return stockQuote;
-    }
+  // TODO - to better illustrate kafka usage move this
+  //     routine to 2 topics one with stock details and another one with
+  //     ticks and join them to generate final
+  //     tick with stock details
 
-    @PreDestroy
-    public void closeProducer() {
-        quotesProducer.close();
-    }
+  /**
+   * Randomize values of high, low and lastTrade of quotes,
+   *
+   * @param stockQuote the quote to have some values randomized
+   * @return StockQuote with high, low and lastTrade randomized.
+   */
+  public StockQuote enrich(StockQuote stockQuote) {
+    Random random = new Random();
+    int upTo = 1000;
+    stockQuote.setHigh(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
+    stockQuote.setLow(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
+    stockQuote.setLastTrade(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
+    return stockQuote;
+  }
+
+  @PreDestroy
+  public void closeProducer() {
+    quotesProducer.close();
+  }
 }
