@@ -13,9 +13,17 @@ public class KafkaProps {
 
   private List<String> hosts;
   private StockQuote stockQuote;
+  private KafkaClient client;
 
   @Data
   public static class StockQuote {
     private String topic;
   }
+
+  @Data
+  public static class KafkaClient {
+    private String groupId;
+    private int numThreads;
+  }
+
 }

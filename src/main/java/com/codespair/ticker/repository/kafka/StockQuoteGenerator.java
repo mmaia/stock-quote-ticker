@@ -6,7 +6,7 @@ import com.codespair.ticker.model.StockExchangeMaps;
 import com.codespair.ticker.model.StockQuote;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.PreDestroy;
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ import java.util.Random;
  * randomly generated quotes.
  */
 @Slf4j
-@Service
+@Repository
 public class StockQuoteGenerator {
 
   private GeneratorProps generatorProps;
@@ -38,7 +38,7 @@ public class StockQuoteGenerator {
     this.quotesProducer = quotesProducer;
   }
 
-  @Async("taskExecutor")
+  @Async("producerTaskExecutor")
   public void startGenerator() {
     if (generatorProps.isEnabled()) {
       try {
