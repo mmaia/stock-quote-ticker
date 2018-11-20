@@ -13,15 +13,12 @@ import java.util.Map;
 @Slf4j
 @Service
 public class StockQuoteMetaDetails {
-  private KafkaProps kafkaProps;
   private StockExchangeMaps stockExchangeMaps;
   private StringJsonNodeClientProducer quotesProducer;
 
-  public StockQuoteMetaDetails(KafkaProps kafkaProps,
-                               StockExchangeMaps stockExchangeMaps,
+  public StockQuoteMetaDetails(StockExchangeMaps stockExchangeMaps,
                                StringJsonNodeClientProducer quotesProducer) {
 
-    this.kafkaProps = kafkaProps;
     this.stockExchangeMaps = stockExchangeMaps;
     this.quotesProducer = quotesProducer;
   }
