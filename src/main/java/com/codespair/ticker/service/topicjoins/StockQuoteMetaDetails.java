@@ -1,9 +1,9 @@
-package com.codespair.ticker.repository.kafka;
+package com.codespair.ticker.service.topicjoins;
 
-import com.codespair.ticker.config.KafkaProps;
 import com.codespair.ticker.model.Exchange;
 import com.codespair.ticker.model.StockDetail;
 import com.codespair.ticker.model.StockExchangeMaps;
+import com.codespair.ticker.repository.kafka.StringJsonNodeClientProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

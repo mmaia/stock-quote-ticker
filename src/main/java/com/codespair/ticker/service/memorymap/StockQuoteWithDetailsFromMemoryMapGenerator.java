@@ -1,16 +1,17 @@
-package com.codespair.ticker.repository.kafka;
+package com.codespair.ticker.service.memorymap;
 
 import com.codespair.ticker.config.GeneratorProps;
 import com.codespair.ticker.config.KafkaProps;
 import com.codespair.ticker.model.StockExchangeMaps;
 import com.codespair.ticker.model.StockQuote;
+import com.codespair.ticker.repository.kafka.StringJsonNodeClientProducer;
+import com.codespair.ticker.service.TickGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
-import java.math.BigDecimal;
-import java.util.Random;
 
 /**
  * This class on startup try to start generating random
@@ -21,23 +22,25 @@ import java.util.Random;
  */
 @Slf4j
 @Service
-public class StockQuoteGenerator {
+@Profile("memory-map")
+public class StockQuoteWithDetailsFromMemoryMapGenerator implements TickGenerator {
 
   private GeneratorProps generatorProps;
   private KafkaProps kafkaProps;
   private StockExchangeMaps stockExchangeMaps;
   private StringJsonNodeClientProducer quotesProducer;
 
-  public StockQuoteGenerator(GeneratorProps generatorProps,
-                             KafkaProps kafkaProps,
-                             StockExchangeMaps stockExchangeMaps,
-                             StringJsonNodeClientProducer quotesProducer) {
+  public StockQuoteWithDetailsFromMemoryMapGenerator(GeneratorProps generatorProps,
+                                                     KafkaProps kafkaProps,
+                                                     StockExchangeMaps stockExchangeMaps,
+                                                     StringJsonNodeClientProducer quotesProducer) {
     this.generatorProps = generatorProps;
     this.kafkaProps = kafkaProps;
     this.stockExchangeMaps = stockExchangeMaps;
     this.quotesProducer = quotesProducer;
   }
 
+  @Override
   @Async("producerTaskExecutor")
   public void startGenerator() {
     if (generatorProps.isEnabled()) {
@@ -47,9 +50,8 @@ public class StockQuoteGenerator {
           generatorProps.getStartDelayMilliseconds(), generatorProps.getIntervalMilliseconds());
         while (true) {
           // in the next 2 calls a random quote is picked from the map and randomically generated values are added to the quote.
-          StockQuote stockQuote = stockExchangeMaps.randomStockSymbol();
-          stockQuote = enrich(stockQuote);
-
+          StockQuote stockQuote = stockExchangeMaps.randomStockSymbolWithDetails();
+          stockQuote = addRandomValues(stockQuote);
           quotesProducer.send(stockQuoteTopic(), stockQuote.getSymbol(), stockQuote); // send to kafka topic
           Thread.sleep(generatorProps.getIntervalMilliseconds());
         }
@@ -59,28 +61,9 @@ public class StockQuoteGenerator {
     }
   }
 
-  private String stockQuoteTopic() {
+  @Override
+  public String stockQuoteTopic() {
     return this.kafkaProps.getStockQuote().getTopic();
-  }
-
-  // TODO - to better illustrate kafka usage move this
-  //     routine to 2 topics one with stock details and another one with
-  //     ticks and join them to generate final
-  //     tick with stock details
-
-  /**
-   * Randomize values of high, low and lastTrade of quotes,
-   *
-   * @param stockQuote the quote to have some values randomized
-   * @return StockQuote with high, low and lastTrade randomized.
-   */
-  public StockQuote enrich(StockQuote stockQuote) {
-    Random random = new Random();
-    int upTo = 1000;
-    stockQuote.setHigh(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
-    stockQuote.setLow(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
-    stockQuote.setLastTrade(new BigDecimal(random.nextFloat() * upTo).setScale(3, BigDecimal.ROUND_CEILING));
-    return stockQuote;
   }
 
   @PreDestroy

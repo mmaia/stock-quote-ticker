@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "generator")
 public class GeneratorProps {
   private boolean enabled;
+  private boolean raw;
   private int startDelayMilliseconds;
   private int intervalMilliseconds;
   private int numThreads;

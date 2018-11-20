@@ -29,7 +29,7 @@ public class StringJsonNodeClientProducer implements AutoCloseable {
     kafkaProducer = new KafkaProducer<>(kafkaClientProperties());
   }
 
-  Future<RecordMetadata> send(String topic, String key, Object instance) {
+  public Future<RecordMetadata> send(String topic, String key, Object instance) {
     ObjectMapper objectMapper = new ObjectMapper();
     JsonNode jsonNode = objectMapper.convertValue(instance, JsonNode.class);
     return kafkaProducer.send(new ProducerRecord<>(topic, key,

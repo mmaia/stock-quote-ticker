@@ -1,6 +1,8 @@
 server:
   port: 7001
 
+spring.profiles.active: raw # controls which generator strategy to use memory map join(memory-map) or kafka joins(raw).
+
 generator:
   enabled: true
   start-delay-milliseconds: 2000
@@ -14,6 +16,7 @@ kafka:
     - "kafka_2:9094"
   stock-quote:
     topic: stock-quote-tick
+    raw-topic: raw-stock-quote-tick
   client:
     num-threads: 3
     groupId: stockQuoteTickClientGroupId

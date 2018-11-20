@@ -18,6 +18,7 @@ public class KafkaProps {
   @Data
   public static class StockQuote {
     private String topic;
+    private String rawTopic;
   }
 
   @Data

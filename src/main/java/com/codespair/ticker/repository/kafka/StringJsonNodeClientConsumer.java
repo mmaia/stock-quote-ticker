@@ -29,7 +29,7 @@ public class StringJsonNodeClientConsumer {
     }
 
     @Async("clientTaskExecutor")
-    void startConsumer(String groupId, Collection<String> topicNames) {
+    public void startConsumer(String groupId, Collection<String> topicNames) {
         log.info("StringJsonNodeClientConsumer.startConsumer");
         final KafkaConsumer<String, JsonNode> kafkaConsumer = new KafkaConsumer<>(loadConsumerConfigProperties(groupId));
         kafkaConsumer.subscribe(topicNames);

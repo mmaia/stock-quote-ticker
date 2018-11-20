@@ -1,6 +1,7 @@
-package com.codespair.ticker.repository.kafka;
+package com.codespair.ticker.service.memorymap;
 
 import com.codespair.ticker.config.KafkaProps;
+import com.codespair.ticker.repository.kafka.StringJsonNodeClientConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

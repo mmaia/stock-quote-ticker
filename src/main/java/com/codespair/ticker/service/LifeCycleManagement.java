@@ -4,9 +4,8 @@ import com.codespair.ticker.config.GeneratorProps;
 import com.codespair.ticker.config.KafkaProps;
 import com.codespair.ticker.repository.csv.CsvParser;
 import com.codespair.ticker.repository.csv.CsvToMemoryMapLoader;
-import com.codespair.ticker.repository.kafka.StockQuoteClient;
-import com.codespair.ticker.repository.kafka.StockQuoteGenerator;
-import com.codespair.ticker.repository.kafka.StockQuoteMetaDetails;
+import com.codespair.ticker.service.memorymap.StockQuoteClient;
+import com.codespair.ticker.service.topicjoins.StockQuoteMetaDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -19,20 +18,20 @@ import org.springframework.stereotype.Component;
 public class LifeCycleManagement implements ApplicationListener<ApplicationReadyEvent> {
 
   private final CsvParser csvParser;
-  private final StockQuoteGenerator stockQuoteGenerator;
+  private TickGenerator tick;
   private final GeneratorProps generatorProps;
   private final StockQuoteClient stockQuoteClient;
   private final StockQuoteMetaDetails stockQuoteMetaDetails;
   private final KafkaProps kafkaProps;
 
   public LifeCycleManagement(CsvToMemoryMapLoader csvToMemoryMapLoader,
-                             StockQuoteGenerator stockQuoteGenerator,
+                             TickGenerator tick,
                              GeneratorProps generatorProps,
                              StockQuoteClient stockQuoteClient,
                              StockQuoteMetaDetails stockQuoteMetaDetails,
                              KafkaProps kafkaProps) {
     this.csvParser = csvToMemoryMapLoader;
-    this.stockQuoteGenerator = stockQuoteGenerator;
+    this.tick = tick;
     this.generatorProps = generatorProps;
     this.stockQuoteClient = stockQuoteClient;
     this.stockQuoteMetaDetails = stockQuoteMetaDetails;
@@ -52,7 +51,7 @@ public class LifeCycleManagement implements ApplicationListener<ApplicationReady
   private void startQuoteProducer(int threads) {
     for (int i = 0; i < threads; i++) {
       try {
-        stockQuoteGenerator.startGenerator();
+        tick.startGenerator();
         Thread.sleep(generatorProps.getIntervalMilliseconds() / threads);
       } catch (InterruptedException e) {
         log.error("Error initializing multi threaded producer, num threads: {}", threads);

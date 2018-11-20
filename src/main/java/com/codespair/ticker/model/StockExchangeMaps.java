@@ -26,7 +26,7 @@ public class StockExchangeMaps {
   public Map<String, StockDetail> getStockDetailsFromExchange(Exchange exchange) {
     return exchanges.get(exchange.name());
   }
-  
+
   /**
    * Return number of instruments under that stpecific stock exchange.
    * @param exchange the exchange to get the number of trading instruments from
@@ -37,8 +37,25 @@ public class StockExchangeMaps {
   }
 
   /**
-   * @return stock quote picked randomically.
-   * @see StockQuote
+   * @return stock quote picked randomically, enriched with meta data details.
+   * @see StockQuote - with StockDetail.
+   */
+  public StockQuote randomStockSymbolWithDetails() {
+    if (!valid()) return null;
+    String exchange = Exchange.randomExchange();
+    Map<String, StockDetail> stockDetailMap = exchanges.get(exchange);
+    List<String> symbols = new ArrayList<>(stockDetailMap.keySet());
+    Random random = new Random();
+    int whichInstrument = random.nextInt(symbols.size());
+    return StockQuote.builder()
+      .exchange(Exchange.valueOf(exchange))
+      .symbol(symbols.get(whichInstrument))
+      .stockDetail(stockDetailMap.get(symbols.get(whichInstrument)))
+      .build();
+  }
+
+  /**
+   * @return A simple stock quote with exchange and symbol only, no details.
    */
   public StockQuote randomStockSymbol() {
     if (!valid()) return null;
@@ -50,7 +67,6 @@ public class StockExchangeMaps {
     return StockQuote.builder()
       .exchange(Exchange.valueOf(exchange))
       .symbol(symbols.get(whichInstrument))
-      .stockDetail(stockDetailMap.get(symbols.get(whichInstrument)))
       .build();
   }
 
