@@ -6,6 +6,7 @@ import com.codespair.ticker.repository.csv.CsvParser;
 import com.codespair.ticker.repository.csv.CsvToMemoryMapLoader;
 import com.codespair.ticker.repository.kafka.StockQuoteClient;
 import com.codespair.ticker.repository.kafka.StockQuoteGenerator;
+import com.codespair.ticker.repository.kafka.StockQuoteMetaDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -21,17 +22,20 @@ public class LifeCycleManagement implements ApplicationListener<ApplicationReady
   private final StockQuoteGenerator stockQuoteGenerator;
   private final GeneratorProps generatorProps;
   private final StockQuoteClient stockQuoteClient;
+  private final StockQuoteMetaDetails stockQuoteMetaDetails;
   private final KafkaProps kafkaProps;
 
   public LifeCycleManagement(CsvToMemoryMapLoader csvToMemoryMapLoader,
                              StockQuoteGenerator stockQuoteGenerator,
                              GeneratorProps generatorProps,
                              StockQuoteClient stockQuoteClient,
+                             StockQuoteMetaDetails stockQuoteMetaDetails,
                              KafkaProps kafkaProps) {
     this.csvParser = csvToMemoryMapLoader;
     this.stockQuoteGenerator = stockQuoteGenerator;
     this.generatorProps = generatorProps;
     this.stockQuoteClient = stockQuoteClient;
+    this.stockQuoteMetaDetails = stockQuoteMetaDetails;
     this.kafkaProps = kafkaProps;
   }
 
@@ -41,6 +45,7 @@ public class LifeCycleManagement implements ApplicationListener<ApplicationReady
     csvParser.loadCSVs();
     startQuoteProducer(generatorProps.getNumThreads());
     startQuoteConsumer(kafkaProps.getClient().getNumThreads());
+    stockQuoteMetaDetails.produceStockQuoteMeta();
     log.info("Lifecycle initialization done!");
   }
 

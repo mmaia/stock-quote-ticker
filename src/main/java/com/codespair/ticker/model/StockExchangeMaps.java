@@ -23,6 +23,10 @@ public class StockExchangeMaps {
     exchanges.put(key, exchange);
   }
 
+  public Map<String, StockDetail> getStockDetailsFromExchange(Exchange exchange) {
+    return exchanges.get(exchange.name());
+  }
+  
   /**
    * Return number of instruments under that stpecific stock exchange.
    * @param exchange the exchange to get the number of trading instruments from

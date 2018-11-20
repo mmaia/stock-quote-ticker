@@ -1,10 +1,9 @@
 package com.codespair.ticker.repository.kafka;
 
+import com.codespair.ticker.config.KafkaProps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.codespair.ticker.config.KafkaProps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -12,15 +11,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.connect.json.JsonSerializer;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.PreDestroy;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
 @Slf4j
-@Component
+@Repository
 public class StringJsonNodeClientProducer implements AutoCloseable {
 
   private final KafkaProps config;

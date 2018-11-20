@@ -11,16 +11,13 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.connect.json.JsonDeserializer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-import javax.annotation.PreDestroy;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-@Component
+@Repository
 @Scope("prototype")
 @Slf4j
 public class StringJsonNodeClientConsumer {

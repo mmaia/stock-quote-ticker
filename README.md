@@ -1,7 +1,8 @@
 # Stock Quote Generator
 
-This project generates a conStant flow of messages that are produced to a kafka topic and simulate 
-instrument ticks from the market. 
+This project generates a constant flow of messages that are produced to a kafka topic simulating
+stock quote ticks from the market.
+ 
 I've build this project to help me with my studies of kafka in the domain of Bank Securities. 
 
 Current implementation version which will be tagged as 1.0 uses the following approach: 
@@ -54,25 +55,5 @@ Once the application is started it immediately starts to produce messages to kaf
 The docker compose file has by default portainer application to help visualize the docker infra-structure and 
 also a kafka-manager console to help to visualize the Kafka broker cluster that is started and by default contains 3 brokers. 
 
-# License
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-Copyright (c) 2018 - Maia, M. P. A.
+---
+MIT License.

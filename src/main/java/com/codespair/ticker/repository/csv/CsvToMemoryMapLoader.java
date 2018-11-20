@@ -70,6 +70,18 @@ public class CsvToMemoryMapLoader implements CsvParser {
     log.info("All CSVs have been loaded");
   }
 
+  /**
+   * Defines pattern of CSVs to be parsed.
+   * @return a mapping strategy to parse CSVs
+   */
+  private ColumnPositionMappingStrategy<StockDetail> getStockDetailMappingStrategy() {
+    ColumnPositionMappingStrategy<StockDetail> loadStrategy = new ColumnPositionMappingStrategy<>();
+    loadStrategy.setType(StockDetail.class);
+    String[] columns = new String[]{"symbol", "name", "lastSale", "marketCap", "ipoYear", "sector", "industry", "summaryQuote"}; // the fields to bind do in your JavaBean
+    loadStrategy.setColumnMapping(columns);
+    return loadStrategy;
+  }
+
   private Map<String, StockDetail> stockExchagesMap(String exchange) {
     return loadExchangeCSV("/exchanges/" + exchange + ".csv");
   }

@@ -33,4 +33,14 @@ public class ThreadPoolExecutor {
     return pool;
   }
 
+  @Bean
+  public ThreadPoolTaskExecutor singleThreadedProducerTaskExecutor() {
+    ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
+    pool.setCorePoolSize(1);
+    pool.setMaxPoolSize(1);
+    pool.setQueueCapacity(10_000);
+    pool.setWaitForTasksToCompleteOnShutdown(true);
+    return pool;
+  }
+
 }

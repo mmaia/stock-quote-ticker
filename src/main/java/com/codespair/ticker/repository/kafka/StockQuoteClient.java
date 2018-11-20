@@ -2,12 +2,12 @@ package com.codespair.ticker.repository.kafka;
 
 import com.codespair.ticker.config.KafkaProps;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
 @Slf4j
-@Repository
+@Service
 public class StockQuoteClient {
   final StringJsonNodeClientConsumer consumer;
   private final KafkaProps kafkaProps;

@@ -18,4 +18,5 @@ public class StockDetail {
     private String sector;
     private String industry;
     private String summaryQuote;
+    private Exchange exchange;
 }
