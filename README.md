@@ -30,7 +30,7 @@ application.yml file of this project.
 ## Run the project
 
 #### Pre -reqs
- - java 8
+ - java 11 (should work with java 8 and up but not tested)
  - recent version of docker
  - recent version of docker-compose
  - maven
@@ -52,8 +52,8 @@ like from an IDE or using command line:
 
 Once the application is started it immediately starts to produce messages to kafka topic based on the configurations.
 
-The docker compose file has by default portainer application to help visualize the docker infra-structure and 
-also a kafka-manager console to help to visualize the Kafka broker cluster that is started and by default contains 3 brokers. 
+The docker compose file has by default a kafka-manager console to help visualizing the Kafka broker cluster 
+that is started with a single node. 
 
 ---
 MIT License.

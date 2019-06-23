@@ -1,22 +1,41 @@
 server:
   port: 7001
 
-spring.profiles.active: raw # controls which generator strategy to use memory map join(memory-map) or kafka joins(raw).
+spring:
+  application:
+    name: json-stock-quote-ticker
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.stockgeeks.ticker.service.JsonSerializerInstant
+      client-id: "json-raw-quote-producer-spring-kafka"
+      properties:
+        enable:
+          idempotence: true
 
 generator:
-  enabled: true
-  start-delay-milliseconds: 2000
-  interval-milliseconds: 100
-  num-threads: 4
+  tick:
+    enabled: true
+    start-delay-milliseconds: 5000
+    interval-milliseconds: 2
+    num-threads: 1
 
-kafka:
-  hosts:
-    - "kafka:9092"
-    - "kafka_1:9093"
-    - "kafka_2:9094"
-  stock-quote:
-    topic: stock-quote-tick
-    raw-topic: raw-stock-quote-tick
-  client:
-    num-threads: 3
-    groupId: stockQuoteTickClientGroupId
+# Enable all spring boot actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: "ALWAYS"
+
+  metrics:
+    tags:
+      application: ${spring.application.name}

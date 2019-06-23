@@ -1,4 +1,4 @@
-package com.codespair.ticker;
+package io.codespair.ticker;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

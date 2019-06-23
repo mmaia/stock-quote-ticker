@@ -1,6 +1,6 @@
-package com.codespair.ticker.model;
+package io.stockgeeks.ticker.model;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Enums with list of exchanges from which there are csv files to load the stock details from.
@@ -15,8 +15,7 @@ public enum Exchange {
    * @return - a random exchange.
    */
   public static String randomExchange() {
-    Random random = new Random();
-    int whichExchange = random.nextInt(values().length);
+    int whichExchange = ThreadLocalRandom.current().nextInt(values().length);
     return values()[whichExchange].name();
   }
 }

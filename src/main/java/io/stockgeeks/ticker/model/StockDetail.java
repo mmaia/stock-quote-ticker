@@ -1,14 +1,12 @@
-package com.codespair.ticker.model;
+package io.stockgeeks.ticker.model;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Wrapper model to csv files with stock detail information per exchange, hence all fields mapped to strings to simplify.
  */
 
 @Data
-@Slf4j
 public class StockDetail {
     private String symbol;
     private String name;
@@ -18,5 +16,4 @@ public class StockDetail {
     private String sector;
     private String industry;
     private String summaryQuote;
-    private Exchange exchange;
 }

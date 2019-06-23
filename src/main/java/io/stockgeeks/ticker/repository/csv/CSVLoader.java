@@ -1,21 +1,21 @@
-package com.codespair.ticker.repository.csv;
+package io.stockgeeks.ticker.repository.csv;
 
 import com.opencsv.CSVReader;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
-import com.codespair.ticker.model.Exchange;
-import com.codespair.ticker.model.StockDetail;
-import com.codespair.ticker.model.StockExchangeMaps;
+import io.stockgeeks.ticker.model.Exchange;
+import io.stockgeeks.ticker.model.StockDetail;
+import io.stockgeeks.ticker.service.generator.StockExchangeMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Class that loads stock exchange csv files in memory maps that are then used as meta data to generate stock quote ticks.
@@ -24,12 +24,12 @@ import java.util.Map;
  */
 @Slf4j
 @Component("csvParser")
-public class CsvToMemoryMapLoader implements CsvParser {
+public class CSVLoader {
 
-  private final StockExchangeMaps stockExchangeMaps;
+  private final StockExchangeMeta stockExchangeMeta;
 
-  public CsvToMemoryMapLoader(StockExchangeMaps stockExchangeMaps) {
-    this.stockExchangeMaps = stockExchangeMaps;
+  public CSVLoader(StockExchangeMeta stockExchangeMeta) {
+    this.stockExchangeMeta = stockExchangeMeta;
   }
 
   /**
@@ -39,21 +39,19 @@ public class CsvToMemoryMapLoader implements CsvParser {
    * @param filePath the filepath relative to the classpath where the csv is to be found, i.e - /static/AMEX.csv, the
    *                 expected csv column structure is a csv with attributes separated by comma ','  and with the structure:
    *                 "symbol", "name", "lastSale", "marketCap", "ipoYear", "sector", "industry", "summaryQuote"
-   *
    * @returns a map where each key is a stock exchange symbol and each element is a StockDetail object filled with
    * data loaded from the CSVs.
    */
-  public Map<String, StockDetail> loadExchangeCSV(String filePath) {
+  Map<String, StockDetail> loadExchangeCSV(String filePath) {
     Map<String, StockDetail> result;
     CsvToBean<StockDetail> csv = new CsvToBean<>();
     try {
-      File resource = new ClassPathResource(filePath).getFile();
-      FileReader fileReader = new FileReader(resource);
-      CSVReader reader = new CSVReader(fileReader);
+      InputStreamReader inputStreamReader = new InputStreamReader(new ClassPathResource(filePath).getInputStream());
+      CSVReader reader = new CSVReader(inputStreamReader);
       csv.setCsvReader(reader);
       csv.setMappingStrategy(getStockDetailMappingStrategy());
       result = stockDetailsBySymbol(csv.parse());
-      fileReader.close();
+      inputStreamReader.close();
     } catch (Exception e) {
       log.error("Failed to load csv file with exchange information because: {}", e.getMessage());
       throw new InvalidCSVPathException(e.getMessage());
@@ -61,29 +59,24 @@ public class CsvToMemoryMapLoader implements CsvParser {
     return result;
   }
 
-  @Override
   public void loadCSVs() {
     Arrays.stream(Exchange.values()).forEach(exchange -> {
-      stockExchangeMaps.addExchangeMap(exchange.name(), stockExchagesMap(exchange.name()));
-      log.info("csv mapped: {}, number of stocks(instruments): {}", exchange.name(), stockExchangeMaps.numStocks(exchange));
+      stockExchangeMeta.addExchangeMap(exchange.name(), stockExchagesMap(exchange.name()));
+      log.info("csv mapped: {}, number of stocks(instruments): {}", exchange.name(), stockExchangeMeta.numStocks(exchange));
     });
     log.info("All CSVs have been loaded");
   }
 
-  /**
-   * Defines pattern of CSVs to be parsed.
-   * @return a mapping strategy to parse CSVs
-   */
+  private Map<String, StockDetail> stockExchagesMap(String exchange) {
+    return loadExchangeCSV("/exchanges/" + exchange + ".csv");
+  }
+
   private ColumnPositionMappingStrategy<StockDetail> getStockDetailMappingStrategy() {
     ColumnPositionMappingStrategy<StockDetail> loadStrategy = new ColumnPositionMappingStrategy<>();
     loadStrategy.setType(StockDetail.class);
     String[] columns = new String[]{"symbol", "name", "lastSale", "marketCap", "ipoYear", "sector", "industry", "summaryQuote"}; // the fields to bind do in your JavaBean
     loadStrategy.setColumnMapping(columns);
     return loadStrategy;
-  }
-
-  private Map<String, StockDetail> stockExchagesMap(String exchange) {
-    return loadExchangeCSV("/exchanges/" + exchange + ".csv");
   }
 
   private Map<String, StockDetail> stockDetailsBySymbol(List<StockDetail> stockDetailList) {

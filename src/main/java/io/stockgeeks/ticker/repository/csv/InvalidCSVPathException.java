@@ -1,4 +1,4 @@
-package com.codespair.ticker.repository.csv;
+package io.stockgeeks.ticker.repository.csv;
 
 /**
  * Runtime Exception that should be thrown when an invalid csv file path is specified.
