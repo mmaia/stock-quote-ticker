@@ -22,7 +22,7 @@ generator:
   tick:
     enabled: true
     start-delay-milliseconds: 5000
-    interval-milliseconds: 2
+    interval-milliseconds: 300
     num-threads: 1
 
 # Enable all spring boot actuator endpoints

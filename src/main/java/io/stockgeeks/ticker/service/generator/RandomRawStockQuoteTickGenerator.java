@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,21 +61,16 @@ public class RandomRawStockQuoteTickGenerator {
    * @param stockQuote to be updated
    * @return an updated StockQuote
    */
-  public StockQuote enrich(StockQuote stockQuote) {
+  StockQuote enrich(StockQuote stockQuote) {
     TickTracker tickTracker = processQuote(stockQuote);
-    StockQuote result = buildUpdateQuote(stockQuote, tickTracker);
-    return result;
+    return buildUpdateQuote(stockQuote, tickTracker);
   }
-
   private StockQuote buildUpdateQuote(StockQuote stockQuote, TickTracker tickTracker) {
-    StockQuote result = new StockQuote();
-    stockQuote.setSymbol(stockQuote.getSymbol());
-    stockQuote.setExchange(stockQuote.getExchange());
-    stockQuote.setHigh(tickTracker.getHigh());
-    stockQuote.setLow(tickTracker.getLow());
-    stockQuote.setTradeValue(tickTracker.getCurrentPrice());
-    stockQuote.setTradeTime(stockQuote.getTradeTime() == null ? Instant.now() : stockQuote.getTradeTime());
-    return result;
+    stockQuote.setHigh(tickTracker.getHigh().setScale(3, RoundingMode.HALF_EVEN));
+    stockQuote.setLow(tickTracker.getLow().setScale(3, RoundingMode.HALF_EVEN));
+    stockQuote.setTradeValue(tickTracker.getCurrentPrice().setScale(3, RoundingMode.HALF_EVEN));
+    stockQuote.setTradeTime(Instant.now());
+    return stockQuote;
   }
 
   /**

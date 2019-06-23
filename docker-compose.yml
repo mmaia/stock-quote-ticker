@@ -22,25 +22,10 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_CREATE_TOPICS: "raw-stock-quote-tick:1:1"
-      JMX_PORT: 9998
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9998
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     ports:
     - 9092:9092
-    - 9998:9998
     depends_on:
     - zookeeper
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-
-  # https://github.com/yahoo/kafka-manager
-  # https://hub.docker.com/r/hlebalbau/kafka-manager/
-  kafka-manager:
-    container_name: kafka-manager
-    image: hlebalbau/kafka-manager:latest
-    environment:
-    - ZK_HOSTS=zookeeper:2181
-    ports:
-    - 9000:9000
-    depends_on:
-    - kafka
